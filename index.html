@@ -82,6 +82,37 @@
     .hero h2 { font-size: clamp(1.3rem, 4vw, 1.8rem); color: var(--gul); margin-bottom: 10px; }
     .hero p { font-size: 1rem; line-height: 1.6; color: #ddd; max-width: 700px; }
 
+    /* UTHÄMTNING / INFO */
+    .info-panel {
+      background: var(--vit);
+      border: 2px solid var(--gra-kant);
+      border-left: 5px solid var(--gul);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+    }
+    .info-panel h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--svart);
+      margin-bottom: 12px;
+    }
+    .info-panel p {
+      font-size: .92rem;
+      line-height: 1.55;
+      color: var(--gra-text);
+      margin-bottom: 10px;
+    }
+    .info-panel p:last-child { margin-bottom: 0; }
+    .info-panel strong { color: var(--svart); }
+    .info-panel a {
+      color: var(--gul-mork);
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    .info-panel a:hover { color: var(--svart); }
+
     /* KATEGORI-KORT */
     .kat-grid {
       display: grid;
@@ -211,6 +242,8 @@
       padding: 18px 16px; margin-top: auto;
     }
     footer strong { color: var(--gul); }
+    footer a { color: #bbb; text-decoration: underline; }
+    footer a:hover { color: var(--gul); }
 
     @media (max-width: 600px) {
       .header-inner { padding: 14px 14px 12px; }
@@ -246,6 +279,7 @@
 
 <footer>
   <strong>Stocksunds IF</strong> &nbsp;|&nbsp; Allt material är gratis – ta det som passar dig!
+  &nbsp;|&nbsp; Uthämtning: Stockhagens IP · Frågor: <a href="mailto:galago@live.se">galago@live.se</a>
 </footer>
 
 <script>
@@ -359,6 +393,20 @@ function itemHTML(item) {
     </div>`;
 }
 
+// ── UTHÄMTNING & KONTAKT ─────────────────────────────────
+function pickupInfoHTML() {
+  return `
+    <div class="info-panel">
+      <h3>📍 Uthämtning &amp; reservation</h3>
+      <p><strong>Plats:</strong> Kläder och utrustning finns på <strong>Stockhagens IP</strong>.</p>
+      <p><strong>När:</strong> Hämtning sker på <strong>måndagar, onsdagar eller torsdagar</strong>.
+      <strong>Inte samma dag</strong> som du beställer – välj en senare hämtdag.</p>
+      <p><strong>Reservation:</strong> Reserverade artiklar hålls kvar i <strong>en vecka</strong>.</p>
+      <p><strong>Frågor?</strong> Kontakta <strong>Johan</strong>:
+      <a href="mailto:galago@live.se">galago@live.se</a></p>
+    </div>`;
+}
+
 // ── DONATIONS-BOX ────────────────────────────────────────
 function donationsHTML() {
   return `
@@ -405,6 +453,7 @@ function visaStart() {
       <p>Stocksunds IF delar ut kvarglömda kläder och äldre utrustning som fortfarande
       fungerar utmärkt. Välj en kategori, hitta det du behöver och kontakta oss för uthämtning.</p>
     </div>
+    ${pickupInfoHTML()}
     <div class="kat-grid">${katCards}</div>
     ${donationsHTML()}`;
 }
@@ -435,6 +484,7 @@ function visaKategori(kat) {
       <h2>${KAT_LABELS[kat]}</h2>
       <button class="back-btn" onclick="visaStart()">← Tillbaka</button>
     </div>
+    ${pickupInfoHTML()}
     ${subHTML}
     ${donationsHTML()}`;
   window.scrollTo({ top: 0, behavior: "smooth" });
