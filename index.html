@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stocksunds IF – Begagnat & Bortskänkt</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --svart:   #111111;
+      --gul:     #F5C800;
+      --gul-mork:#C9A100;
+      --vit:     #FFFFFF;
+      --gra-ljus:#F4F4F4;
+      --gra-kant:#DDDDDD;
+      --gra-text:#555555;
+      --gron:    #2E7D32;
+      --reserv:  #E65100;
+      --radius:  10px;
+      --shadow:  0 2px 10px rgba(0,0,0,.12);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--gra-ljus);
+      color: var(--svart);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* HEADER */
+    header { background: var(--svart); color: var(--gul); }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      padding: 18px 20px 14px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .logo-crest {
+      width: 64px; height: 64px;
+      background: var(--gul); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .logo-crest span { font-size: 22px; font-weight: 900; color: var(--svart); letter-spacing: -1px; }
+    .header-text h1 { font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 800; line-height: 1.15; }
+    .header-text p { font-size: .93rem; color: #ccc; margin-top: 2px; }
+    .tagline {
+      display: inline-block; background: var(--gul); color: var(--svart);
+      font-size: .78rem; font-weight: 700; padding: 2px 9px;
+      border-radius: 20px; margin-top: 6px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+
+    /* NAV */
+    nav { background: #222; border-bottom: 3px solid var(--gul); }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; gap: 4px; padding: 0 16px; flex-wrap: wrap;
+    }
+    .nav-btn {
+      background: none; border: none; color: #ccc;
+      font-size: .92rem; font-weight: 600;
+      padding: 11px 18px; cursor: pointer;
+      transition: color .2s, background .2s;
+      border-bottom: 3px solid transparent; margin-bottom: -3px;
+    }
+    .nav-btn:hover { color: var(--gul); background: #2e2e2e; }
+    .nav-btn.active { color: var(--gul); border-bottom-color: var(--gul); }
+
+    /* MAIN */
+    main {
+      max-width: 1100px; margin: 28px auto;
+      padding: 0 16px; flex: 1; width: 100%;
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--svart); color: var(--vit);
+      border-radius: var(--radius); padding: 32px 28px; margin-bottom: 30px;
+    }
+    .hero h2 { font-size: clamp(1.3rem, 4vw, 1.8rem); color: var(--gul); margin-bottom: 10px; }
+    .hero p { font-size: 1rem; line-height: 1.6; color: #ddd; max-width: 700px; }
+
+    /* KATEGORI-KORT */
+    .kat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px; margin-bottom: 36px;
+    }
+    .kat-card {
+      background: var(--vit); border: 2px solid var(--gra-kant);
+      border-radius: var(--radius); padding: 24px 20px; cursor: pointer;
+      transition: border-color .2s, box-shadow .2s, transform .15s;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 10px; box-shadow: var(--shadow);
+    }
+    .kat-card:hover {
+      border-color: var(--gul);
+      box-shadow: 0 4px 18px rgba(245,200,0,.25);
+      transform: translateY(-3px);
+    }
+    .kat-icon { font-size: 2.8rem; line-height: 1; }
+    .kat-card h3 { font-size: 1.15rem; font-weight: 700; }
+    .kat-count { font-size: .82rem; color: var(--gra-text); background: var(--gra-ljus); padding: 2px 10px; border-radius: 20px; }
+    .kat-arrow { font-size: .85rem; color: var(--gul-mork); font-weight: 700; }
+
+    /* BREADCRUMB */
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      font-size: .88rem; color: var(--gra-text);
+      margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .breadcrumb span { cursor: pointer; }
+    .breadcrumb span:hover { color: var(--svart); text-decoration: underline; }
+    .breadcrumb .sep { color: #bbb; }
+    .breadcrumb .current { color: var(--svart); font-weight: 600; cursor: default; }
+
+    /* KAT-HEADER */
+    .kat-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 26px; padding-bottom: 14px;
+      border-bottom: 3px solid var(--gul);
+    }
+    .kat-header .big-icon { font-size: 2.2rem; }
+    .kat-header h2 { font-size: 1.5rem; font-weight: 800; }
+    .kat-header .back-btn {
+      margin-left: auto; background: var(--svart); color: var(--gul);
+      border: none; padding: 8px 16px; border-radius: 6px;
+      font-weight: 700; cursor: pointer; font-size: .88rem; transition: background .2s;
+    }
+    .kat-header .back-btn:hover { background: #333; }
+
+    /* SUBGRUPP */
+    .subgrupp { margin-bottom: 34px; }
+    .subgrupp-titel {
+      font-size: 1.12rem; font-weight: 700; color: var(--svart);
+      background: var(--gul); display: inline-block;
+      padding: 4px 14px 4px 10px; border-radius: 6px; margin-bottom: 14px;
+    }
+
+    /* ARTIKEL-GRID */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 16px;
+    }
+    .item-card {
+      background: var(--vit); border: 2px solid var(--gra-kant);
+      border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);
+      display: flex; flex-direction: column;
+      transition: border-color .2s, transform .15s;
+    }
+    .item-card:hover { border-color: var(--gul); transform: translateY(-2px); }
+    .item-card.reserverad { opacity: .55; pointer-events: none; }
+
+    .item-img {
+      width: 100%; aspect-ratio: 1 / 1;
+      background: linear-gradient(135deg, #e8e8e8, #d4d4d4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.2rem; overflow: hidden;
+    }
+    .item-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .item-body { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .item-namn { font-size: .95rem; font-weight: 700; line-height: 1.3; }
+    .item-storlek { display: inline-flex; align-items: center; gap: 4px; font-size: .8rem; color: var(--gra-text); }
+    .storlek-badge {
+      background: var(--svart); color: var(--gul);
+      font-size: .72rem; font-weight: 800;
+      padding: 1px 7px; border-radius: 4px; letter-spacing: .03em;
+    }
+    .item-besk { font-size: .82rem; color: var(--gra-text); line-height: 1.4; margin-top: 4px; }
+    .item-pris { margin-top: auto; padding-top: 8px; }
+    .fri-badge {
+      display: inline-block;
+      background: #E8F5E9; color: var(--gron);
+      border: 1px solid #C8E6C9;
+      padding: 2px 8px; border-radius: 20px; font-size: .78rem; font-weight: 700;
+    }
+    .reserverad-badge {
+      display: inline-block; background: #FFF3E0; color: var(--reserv);
+      border: 1px solid #FFE0B2; padding: 2px 8px;
+      border-radius: 20px; font-size: .78rem; font-weight: 700;
+    }
+    .empty-msg { text-align: center; padding: 40px 20px; color: var(--gra-text); font-size: 1rem; }
+
+    /* DONATIONS-BOX */
+    .donation-box {
+      background: var(--svart); color: var(--vit);
+      border-radius: var(--radius); padding: 28px 28px 24px;
+      margin-top: 40px; display: flex; flex-wrap: wrap;
+      gap: 24px; align-items: center;
+    }
+    .donation-text { flex: 1; min-width: 220px; }
+    .donation-text h3 { font-size: 1.2rem; color: var(--gul); margin-bottom: 8px; }
+    .donation-text p { font-size: .93rem; color: #ccc; line-height: 1.6; }
+    .swish-card {
+      background: var(--gul); color: var(--svart);
+      border-radius: var(--radius); padding: 18px 24px;
+      text-align: center; min-width: 200px;
+    }
+    .swish-logo { font-size: 1.6rem; font-weight: 900; letter-spacing: -.02em; }
+    .swish-nummer { font-size: 1.45rem; font-weight: 900; letter-spacing: .06em; margin-top: 4px; }
+    .swish-label { font-size: .78rem; color: #444; margin-top: 2px; }
+
+    /* FOOTER */
+    footer {
+      background: var(--svart); color: #888;
+      text-align: center; font-size: .82rem;
+      padding: 18px 16px; margin-top: auto;
+    }
+    footer strong { color: var(--gul); }
+
+    @media (max-width: 600px) {
+      .header-inner { padding: 14px 14px 12px; }
+      .hero { padding: 22px 16px; }
+      main { margin: 18px auto; padding: 0 12px; }
+      .donation-box { padding: 22px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-crest"><span>SIF</span></div>
+    <div class="header-text">
+      <h1>Stocksunds IF</h1>
+      <p>Begagnat &amp; Bortskänkt – ta vad du behöver!</p>
+      <span class="tagline">⚽ Allt är gratis</span>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="visaStart()" id="nav-start">Hem</button>
+    <button class="nav-btn" onclick="visaKategori('klader')" id="nav-klader">👕 Kläder</button>
+    <button class="nav-btn" onclick="visaKategori('utrustning')" id="nav-utrustning">⚽ Utrustning</button>
+    <button class="nav-btn" onclick="visaDonation()" id="nav-donation">💛 Stöd föreningen</button>
+  </div>
+</nav>
+
+<main id="main-content"></main>
+
+<footer>
+  <strong>Stocksunds IF</strong> &nbsp;|&nbsp; Allt material är gratis – ta det som passar dig!
+</footer>
+
+<script>
+// ════════════════════════════════════════════════════════
+//  ↓↓↓  REDIGERA BARA NEDAN – ARTIKLAR & INSTÄLLNINGAR  ↓↓↓
+// ════════════════════════════════════════════════════════
+
+// BYT TILL FÖRENINGENS SWISH-NUMMER:
+const SWISH_NUMBER = "123 456 78 90";
+
+// ARTIKLAR
+// kategori: "klader" eller "utrustning"
+// subtyp:   "troejor" | "shorts" | "strumpor" | "jackor" | "byxor" | "handskar" | "bollar" | "vaeska" | "ovrigt"
+// storlek:  t.ex. "S", "M", "L", "128", "140", "39-42", "5"  – lämna "" om ej relevant
+// bild:     filnamn i mappen /images/ t.ex. "troeja_m.jpg" – lämna "" för platshållare
+// status:   "ledig" | "reserverad" | "borttagen"
+
+const ITEMS = [
+  // ── TRÖJOR ──────────────────────────────────────────
+  { id:1,  kategori:"klader",     subtyp:"troejor",  namn:"Matchdräkt tröja",    storlek:"S",     beskrivning:"Blå matchdräkt tröja, gott skick.",              bild:"", status:"ledig"     },
+  { id:2,  kategori:"klader",     subtyp:"troejor",  namn:"Matchdräkt tröja",    storlek:"M",     beskrivning:"Blå matchdräkt tröja, gott skick.",              bild:"", status:"ledig"     },
+  { id:3,  kategori:"klader",     subtyp:"troejor",  namn:"Matchdräkt tröja",    storlek:"L",     beskrivning:"Blå matchdräkt tröja, något blekt men ok.",      bild:"", status:"ledig"     },
+  { id:4,  kategori:"klader",     subtyp:"troejor",  namn:"Träningströja",       storlek:"140",   beskrivning:"Gul träningströja, barnstorlek.",                bild:"", status:"ledig"     },
+  { id:5,  kategori:"klader",     subtyp:"troejor",  namn:"Träningströja",       storlek:"152",   beskrivning:"Gul träningströja, barnstorlek.",                bild:"", status:"ledig"     },
+  { id:6,  kategori:"klader",     subtyp:"troejor",  namn:"Träningströja",       storlek:"164",   beskrivning:"Gul träningströja, barnstorlek.",                bild:"", status:"reserverad" },
+
+  // ── SHORTS ──────────────────────────────────────────
+  { id:7,  kategori:"klader",     subtyp:"shorts",   namn:"Matchshorts",         storlek:"S",     beskrivning:"Svarta matchshorts.",                            bild:"", status:"ledig"     },
+  { id:8,  kategori:"klader",     subtyp:"shorts",   namn:"Matchshorts",         storlek:"M",     beskrivning:"Svarta matchshorts.",                            bild:"", status:"ledig"     },
+  { id:9,  kategori:"klader",     subtyp:"shorts",   namn:"Matchshorts",         storlek:"L",     beskrivning:"Svarta matchshorts.",                            bild:"", status:"ledig"     },
+  { id:10, kategori:"klader",     subtyp:"shorts",   namn:"Träningsshorts",      storlek:"128",   beskrivning:"Shorts för barn.",                               bild:"", status:"ledig"     },
+  { id:11, kategori:"klader",     subtyp:"shorts",   namn:"Träningsshorts",      storlek:"140",   beskrivning:"Shorts för barn.",                               bild:"", status:"ledig"     },
+
+  // ── STRUMPOR ────────────────────────────────────────
+  { id:12, kategori:"klader",     subtyp:"strumpor", namn:"Fotbollsstrumpor",    storlek:"35-38", beskrivning:"Blå/gula matchstrumpor.",                        bild:"", status:"ledig"     },
+  { id:13, kategori:"klader",     subtyp:"strumpor", namn:"Fotbollsstrumpor",    storlek:"39-42", beskrivning:"Blå/gula matchstrumpor.",                        bild:"", status:"ledig"     },
+  { id:14, kategori:"klader",     subtyp:"strumpor", namn:"Fotbollsstrumpor",    storlek:"43-46", beskrivning:"Blå/gula matchstrumpor.",                        bild:"", status:"ledig"     },
+
+  // ── JACKOR ──────────────────────────────────────────
+  { id:15, kategori:"klader",     subtyp:"jackor",   namn:"Träningsjacka",       storlek:"M",     beskrivning:"Vindtät träningsjacka.",                         bild:"", status:"ledig"     },
+  { id:16, kategori:"klader",     subtyp:"jackor",   namn:"Träningsjacka",       storlek:"L",     beskrivning:"Vindtät träningsjacka.",                         bild:"", status:"ledig"     },
+
+  // ── BOLLAR ──────────────────────────────────────────
+  { id:17, kategori:"utrustning", subtyp:"bollar",   namn:"Fotboll",             storlek:"4",     beskrivning:"Träningsboll, lite sliten men fungerar bra.",    bild:"", status:"ledig"     },
+  { id:18, kategori:"utrustning", subtyp:"bollar",   namn:"Fotboll",             storlek:"5",     beskrivning:"Träningsboll i gott skick.",                     bild:"", status:"ledig"     },
+  { id:19, kategori:"utrustning", subtyp:"bollar",   namn:"Fotboll",             storlek:"5",     beskrivning:"Träningsboll, behöver pumpas.",                  bild:"", status:"ledig"     },
+
+  // ── VÄSKOR ──────────────────────────────────────────
+  { id:20, kategori:"utrustning", subtyp:"vaeska",   namn:"Träningsväska",       storlek:"",      beskrivning:"Stor träningsväska med klubblogo, lite sliten.", bild:"", status:"ledig"     },
+];
+
+// ════════════════════════════════════════════════════════
+//  ↑↑↑  SLUT PÅ REDIGERBARA DATA  ↑↑↑
+// ════════════════════════════════════════════════════════
+
+// Storleksordning
+const SIZE_ORDER = [
+  "86","92","98","104","110","116","122","128","134","140","146","152","158","164","170","176",
+  "XS","S","M","L","XL","XXL","XXXL",
+  "25-27","28-30","31-34","35-38","39-42","43-46","47-50",
+  "1","2","3","4","5", ""
+];
+
+const SUBTYP_LABELS = {
+  troejor:"Tröjor", shorts:"Shorts", strumpor:"Strumpor",
+  jackor:"Jackor", byxor:"Byxor / Tights", handskar:"Handskar",
+  bollar:"Bollar", vaeska:"Väskor", ovrigt:"Övrigt"
+};
+
+const KAT_IKONER = { klader:"👕", utrustning:"⚽" };
+const KAT_LABELS = { klader:"Kläder", utrustning:"Utrustning" };
+
+// ── HJÄLPFUNKTIONER ──────────────────────────────────────
+function sortIdx(s) { const i = SIZE_ORDER.indexOf(s); return i < 0 ? 900 : i; }
+
+function lediga(kat) {
+  return ITEMS.filter(i => i.kategori === kat && i.status !== "borttagen").length;
+}
+function getSubtyper(kat) {
+  return [...new Set(
+    ITEMS.filter(i => i.kategori === kat && i.status !== "borttagen").map(i => i.subtyp)
+  )];
+}
+function getArtiklar(kat, sub) {
+  return ITEMS
+    .filter(i => i.kategori === kat && i.subtyp === sub && i.status !== "borttagen")
+    .sort((a, b) => sortIdx(a.storlek) - sortIdx(b.storlek));
+}
+
+// ── ITEM CARD ────────────────────────────────────────────
+function itemHTML(item) {
+  const ikon = item.kategori === "klader" ? "👕" : "⚽";
+  const imgHTML = item.bild
+    ? `<div class="item-img"><img src="images/${item.bild}" alt="${item.namn}" loading="lazy"></div>`
+    : `<div class="item-img">${ikon}</div>`;
+  const storlekHTML = item.storlek
+    ? `<span class="item-storlek">Storlek: <span class="storlek-badge">${item.storlek}</span></span>`
+    : "";
+  const prisHTML = item.status === "reserverad"
+    ? `<span class="reserverad-badge">Reserverad</span>`
+    : `<span class="fri-badge">✓ Gratis</span>`;
+  return `
+    <div class="item-card${item.status === "reserverad" ? " reserverad" : ""}">
+      ${imgHTML}
+      <div class="item-body">
+        <div class="item-namn">${item.namn}</div>
+        ${storlekHTML}
+        ${item.beskrivning ? `<div class="item-besk">${item.beskrivning}</div>` : ""}
+        <div class="item-pris">${prisHTML}</div>
+      </div>
+    </div>`;
+}
+
+// ── DONATIONS-BOX ────────────────────────────────────────
+function donationsHTML() {
+  return `
+    <div class="donation-box">
+      <div class="donation-text">
+        <h3>💛 Vill du stötta Stocksunds IF?</h3>
+        <p>Allt vi delar ut är gratis, men en frivillig Swish-donation är alltid uppskattad.
+        Varje krona går direkt till vår ungdomsverksamhet!</p>
+      </div>
+      <div class="swish-card">
+        <div class="swish-logo">Swish</div>
+        <div class="swish-nummer">${SWISH_NUMBER}</div>
+        <div class="swish-label">Frivilligt belopp – tack! 🙏</div>
+      </div>
+    </div>`;
+}
+
+// ── NAVIGATION ───────────────────────────────────────────
+function setNav(id) {
+  document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+  const el = document.getElementById(id);
+  if (el) el.classList.add("active");
+}
+
+function visaStart() {
+  setNav("nav-start");
+  const katCards = ["klader","utrustning"].map(kat => `
+    <div class="kat-card" onclick="visaKategori('${kat}')">
+      <div class="kat-icon">${KAT_IKONER[kat]}</div>
+      <h3>${KAT_LABELS[kat]}</h3>
+      <span class="kat-count">${lediga(kat)} artiklar</span>
+      <span class="kat-arrow">Visa alla →</span>
+    </div>`).join("") + `
+    <div class="kat-card" onclick="visaDonation()">
+      <div class="kat-icon">💛</div>
+      <h3>Stöd föreningen</h3>
+      <span class="kat-count">Frivillig donation</span>
+      <span class="kat-arrow">Swisha →</span>
+    </div>`;
+
+  document.getElementById("main-content").innerHTML = `
+    <div class="hero">
+      <h2>Hitta något du behöver – helt gratis!</h2>
+      <p>Stocksunds IF delar ut kvarglömda kläder och äldre utrustning som fortfarande
+      fungerar utmärkt. Välj en kategori, hitta det du behöver och kontakta oss för uthämtning.</p>
+    </div>
+    <div class="kat-grid">${katCards}</div>
+    ${donationsHTML()}`;
+}
+
+function visaKategori(kat) {
+  setNav("nav-" + kat);
+  const subs = getSubtyper(kat);
+  const subHTML = subs.length === 0
+    ? `<div class="empty-msg">Inga artiklar just nu. Kolla in snart!</div>`
+    : subs.map(sub => {
+        const artiklar = getArtiklar(kat, sub);
+        if (!artiklar.length) return "";
+        return `
+          <div class="subgrupp">
+            <div class="subgrupp-titel">${SUBTYP_LABELS[sub] || sub}</div>
+            <div class="items-grid">${artiklar.map(itemHTML).join("")}</div>
+          </div>`;
+      }).join("");
+
+  document.getElementById("main-content").innerHTML = `
+    <div class="breadcrumb">
+      <span onclick="visaStart()">Hem</span>
+      <span class="sep">›</span>
+      <span class="current">${KAT_LABELS[kat]}</span>
+    </div>
+    <div class="kat-header">
+      <span class="big-icon">${KAT_IKONER[kat]}</span>
+      <h2>${KAT_LABELS[kat]}</h2>
+      <button class="back-btn" onclick="visaStart()">← Tillbaka</button>
+    </div>
+    ${subHTML}
+    ${donationsHTML()}`;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function visaDonation() {
+  setNav("nav-donation");
+  document.getElementById("main-content").innerHTML = `
+    <div class="breadcrumb">
+      <span onclick="visaStart()">Hem</span>
+      <span class="sep">›</span>
+      <span class="current">Stöd föreningen</span>
+    </div>
+    <div class="kat-header">
+      <span class="big-icon">💛</span>
+      <h2>Stöd Stocksunds IF</h2>
+      <button class="back-btn" onclick="visaStart()">← Tillbaka</button>
+    </div>
+    <div style="max-width:700px;">
+      <p style="font-size:1.05rem;line-height:1.7;color:#333;margin-bottom:24px;">
+        Stocksunds IF är en förening driven av engagemang för fotboll och gemenskap.
+        Allt material vi delar ut är helt gratis – men om du vill ge något tillbaka
+        är en frivillig Swish-donation ett fantastiskt sätt att stötta vår ungdomsverksamhet.
+      </p>
+    </div>
+    ${donationsHTML()}`;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Starta sidan
+visaStart();
+</script>
+</body>
+</html>
