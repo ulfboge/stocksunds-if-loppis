@@ -1,5 +1,5 @@
 // ============================================================
-// STOCKSUNDS IF – LOPPSMARKNAD – ARTIKELDATA
+// STOCKSUNDS IF – LOPPIS – ARTIKELDATA
 // ============================================================
 // Redigera den här filen för att lägga till/ta bort artiklar.
 //
