@@ -57,8 +57,9 @@ Storlekar sorteras automatiskt i denna ordning:
 `86 → 176` (barnstorlekar), sedan `XS S M L XL XXL`, sedan skostorlekar, sedan bollstorlekar.
 
 ### Lägga till bilder
-1. Spara bildfilen (JPG eller PNG) i mappen `/images/`
-2. Ange filnamnet i artikelns `bild`-fält, t.ex. `"bild": "shorts_svart_m.jpg"`
+1. **Komprimera gärna stora mobilfoton innan uppladdning** (gratis t.ex. på [Squoosh](https://squoosh.app)) – annars kan sidan bli långsam.
+2. Spara bildfilen (JPG eller PNG) i mappen `/images/`
+3. Ange filnamnet i artikelns `bild`-fält i `index.html`, t.ex. `"bild": "shorts_svart_m.jpg"`
 
 ### Markera som reserverad / borttagen
 ```js
