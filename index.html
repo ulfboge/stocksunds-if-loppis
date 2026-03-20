@@ -43,10 +43,19 @@
     }
     .logo-crest {
       width: 64px; height: 64px;
-      background: var(--gul); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid var(--gul);
+      box-shadow: 0 2px 10px rgba(0,0,0,.35);
+      background: var(--gul);
     }
-    .logo-crest span { font-size: 22px; font-weight: 900; color: var(--svart); letter-spacing: -1px; }
+    .logo-crest img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
     .header-text h1 { font-size: clamp(1.3rem, 4vw, 1.9rem); font-weight: 800; line-height: 1.15; }
     .header-text p { font-size: .93rem; color: #ccc; margin-top: 2px; }
     .tagline {
@@ -370,7 +379,9 @@
 
 <header>
   <div class="header-inner">
-    <div class="logo-crest"><span>SIF</span></div>
+    <div class="logo-crest">
+      <img src="images/stocksunds-if-logo.png" width="64" height="64" alt="Stocksunds IF" decoding="async" fetchpriority="high" />
+    </div>
     <div class="header-text">
       <h1>Stocksunds IF – Loppis</h1>
       <p>Begagnat &amp; Bortskänkt – ta vad du behöver!</p>
