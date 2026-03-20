@@ -89,33 +89,119 @@
     /* UTHÄMTNING / INFO */
     .info-panel {
       background: var(--vit);
-      border: 2px solid var(--gra-kant);
-      border-left: 5px solid var(--gul);
+      border: 1px solid var(--gra-kant);
+      border-left: 6px solid var(--gul);
       border-radius: var(--radius);
-      padding: 20px 22px;
+      padding: 0;
       margin-bottom: 28px;
       box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .info-panel-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 22px 16px;
+      background: linear-gradient(180deg, var(--gra-ljus) 0%, var(--vit) 100%);
+      border-bottom: 1px solid var(--gra-kant);
+    }
+    .info-panel-ico {
+      width: 44px; height: 44px;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--gul);
+      border-radius: 12px;
+      font-size: 1.35rem;
+      line-height: 1;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,.06);
     }
     .info-panel h3 {
-      font-size: 1.05rem;
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
       font-weight: 800;
       color: var(--svart);
-      margin-bottom: 12px;
+      line-height: 1.25;
+      margin: 0;
     }
-    .info-panel p {
+    .info-rows {
+      margin: 0;
+      padding: 4px 22px 18px;
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: minmax(5rem, 6.75rem) 1fr;
+      gap: 8px 20px;
+      padding: 14px 0;
+      border-top: 1px solid #ececec;
+      align-items: start;
+    }
+    .info-row:first-child { border-top: none; padding-top: 12px; }
+    .info-row dt {
+      margin: 0;
+      font-size: .72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--svart);
+      line-height: 1.5;
+      padding-top: .32em;
+    }
+    .info-row dd {
+      margin: 0;
       font-size: .92rem;
-      line-height: 1.55;
+      line-height: 1.65;
       color: var(--gra-text);
-      margin-bottom: 10px;
     }
-    .info-panel p:last-child { margin-bottom: 0; }
-    .info-panel strong { color: var(--svart); }
-    .info-panel a {
-      color: var(--gul-mork);
+    .info-row dd p { margin: 0 0 .65em; }
+    .info-row dd p:last-child { margin-bottom: 0; }
+    .info-tag {
+      display: inline-block;
       font-weight: 700;
-      text-decoration: underline;
+      color: var(--svart);
+      background: rgba(245, 200, 0, .22);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 1px 2px 1px 0;
+      font-size: .88em;
     }
-    .info-panel a:hover { color: var(--svart); }
+    .info-warn {
+      display: block;
+      margin-top: .5em;
+      font-size: .86rem;
+      line-height: 1.5;
+      color: #5a4a00;
+      padding: 8px 10px;
+      background: #fffbeb;
+      border-radius: 6px;
+      border-left: 3px solid var(--gul-mork);
+    }
+    .info-mail {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      padding: 8px 14px;
+      background: var(--svart);
+      color: var(--gul) !important;
+      font-weight: 700;
+      font-size: .88rem;
+      border-radius: 8px;
+      text-decoration: none !important;
+      transition: background .15s, color .15s;
+    }
+    .info-mail:hover {
+      background: #333;
+      color: var(--gul) !important;
+    }
+    @media (max-width: 520px) {
+      .info-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 16px 0;
+      }
+      .info-row dt { padding-top: 0; }
+      .info-panel-head { padding: 16px 16px 14px; }
+      .info-rows { padding: 4px 16px 16px; }
+    }
 
     /* KATEGORI-KORT */
     .kat-grid {
@@ -444,14 +530,37 @@ function itemHTML(item) {
 function pickupInfoHTML() {
   return `
     <div class="info-panel">
-      <h3>📍 Uthämtning &amp; reservation</h3>
-      <p><strong>Plats:</strong> Kläder och utrustning finns på <strong>Stockhagens IP</strong>.</p>
-      <p><strong>När:</strong> Hämtning sker på <strong>måndagar, onsdagar eller torsdagar</strong>.
-      <strong>Inte samma dag</strong> som du beställer – välj en senare hämtdag.</p>
-      <p><strong>Reservation:</strong> Reserverade artiklar hålls kvar i <strong>en vecka</strong>.
-      <strong>Reservera</strong> en ledig artikel via knappen under kortet – då öppnas mejl till <strong>${RESERVATION_KONTAKT}</strong> med rätt <strong>artikelnummer</strong> ifyllt (du kan också mejla själv till samma adress).</p>
-      <p><strong>Frågor?</strong> Kontakta <strong>${RESERVATION_KONTAKT}</strong>:
-      <a href="mailto:${RESERVATION_EMAIL}">${RESERVATION_EMAIL}</a></p>
+      <div class="info-panel-head">
+        <span class="info-panel-ico" aria-hidden="true">📍</span>
+        <h3>Uthämtning &amp; reservation</h3>
+      </div>
+      <dl class="info-rows">
+        <div class="info-row">
+          <dt>Plats</dt>
+          <dd>Kläder och utrustning finns på <span class="info-tag">Stockhagens IP</span>.</dd>
+        </div>
+        <div class="info-row">
+          <dt>När</dt>
+          <dd>
+            <p>Hämtning: <span class="info-tag">måndagar</span>, <span class="info-tag">onsdagar</span> eller <span class="info-tag">torsdagar</span>.</p>
+            <span class="info-warn">Inte samma dag som du beställer – välj en senare hämtdag.</span>
+          </dd>
+        </div>
+        <div class="info-row">
+          <dt>Reservation</dt>
+          <dd>
+            <p>Reserverade artiklar hålls kvar i <span class="info-tag">en vecka</span>.</p>
+            <p>På <strong>lediga</strong> artiklar: använd knappen under kortet – då öppnas mejl till ${RESERVATION_KONTAKT} med artikelnumret ifyllt. Du kan också mejla samma adress själv.</p>
+          </dd>
+        </div>
+        <div class="info-row">
+          <dt>Frågor</dt>
+          <dd>
+            Kontakta <strong>${RESERVATION_KONTAKT}</strong>
+            <a class="info-mail" href="mailto:${RESERVATION_EMAIL}">✉ ${RESERVATION_EMAIL}</a>
+          </dd>
+        </div>
+      </dl>
     </div>`;
 }
 
