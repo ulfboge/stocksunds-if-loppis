@@ -214,6 +214,29 @@
       border: 1px solid #FFE0B2; padding: 2px 8px;
       border-radius: 20px; font-size: .78rem; font-weight: 700;
     }
+    .item-reserve {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--gra-kant);
+    }
+    .item-reserve-link {
+      display: block;
+      font-size: .78rem;
+      font-weight: 800;
+      line-height: 1.35;
+      color: var(--svart);
+      background: var(--gul);
+      text-align: center;
+      padding: 8px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: filter .15s, transform .1s;
+    }
+    .item-reserve-link:hover {
+      filter: brightness(0.96);
+      color: var(--svart);
+    }
+    .item-reserve-link:active { transform: scale(0.98); }
     .empty-msg { text-align: center; padding: 40px 20px; color: var(--gra-text); font-size: 1rem; }
 
     /* DONATIONS-BOX */
@@ -289,6 +312,10 @@
 
 // BYT TILL FÖRENINGENS SWISH-NUMMER:
 const SWISH_NUMBER = "123 456 78 90";
+
+// Reservation via mejl (samma som i infopanel / sidfot)
+const RESERVATION_EMAIL = "galago@live.se";
+const RESERVATION_KONTAKT = "Johan";
 
 // ARTIKLAR
 // kategori: "klader" eller "utrustning"
@@ -369,6 +396,16 @@ function getArtiklar(kat, sub) {
     .sort((a, b) => sortIdx(a.storlek) - sortIdx(b.storlek));
 }
 
+function reservationMailto(item) {
+  const subject = `Reservation loppis – artikel ${item.id}`;
+  const storlekRad = item.storlek ? ` (storlek ${item.storlek})` : "";
+  const body =
+    `Hej ${RESERVATION_KONTAKT}!\n\n` +
+    `Jag vill reservera artikel nummer ${item.id}: ${item.namn}${storlekRad}.\n\n` +
+    `Mvh`;
+  return `mailto:${RESERVATION_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
 // ── ITEM CARD ────────────────────────────────────────────
 function itemHTML(item) {
   const ikon = item.kategori === "klader" ? "👕" : "⚽";
@@ -381,6 +418,11 @@ function itemHTML(item) {
   const prisHTML = item.status === "reserverad"
     ? `<span class="reserverad-badge">Reserverad</span>`
     : `<span class="fri-badge">✓ Gratis</span>`;
+  const reserveHTML = item.status === "reserverad"
+    ? ""
+    : `<div class="item-reserve">
+        <a class="item-reserve-link" href="${reservationMailto(item)}">Reservera: mejla ${RESERVATION_KONTAKT} · artikelnr ${item.id}</a>
+      </div>`;
   return `
     <div class="item-card${item.status === "reserverad" ? " reserverad" : ""}">
       ${imgHTML}
@@ -389,6 +431,7 @@ function itemHTML(item) {
         ${storlekHTML}
         ${item.beskrivning ? `<div class="item-besk">${item.beskrivning}</div>` : ""}
         <div class="item-pris">${prisHTML}</div>
+        ${reserveHTML}
       </div>
     </div>`;
 }
@@ -401,9 +444,10 @@ function pickupInfoHTML() {
       <p><strong>Plats:</strong> Kläder och utrustning finns på <strong>Stockhagens IP</strong>.</p>
       <p><strong>När:</strong> Hämtning sker på <strong>måndagar, onsdagar eller torsdagar</strong>.
       <strong>Inte samma dag</strong> som du beställer – välj en senare hämtdag.</p>
-      <p><strong>Reservation:</strong> Reserverade artiklar hålls kvar i <strong>en vecka</strong>.</p>
-      <p><strong>Frågor?</strong> Kontakta <strong>Johan</strong>:
-      <a href="mailto:galago@live.se">galago@live.se</a></p>
+      <p><strong>Reservation:</strong> Reserverade artiklar hålls kvar i <strong>en vecka</strong>.
+      <strong>Reservera</strong> en ledig artikel via knappen under kortet – då öppnas mejl till <strong>${RESERVATION_KONTAKT}</strong> med rätt <strong>artikelnummer</strong> ifyllt (du kan också mejla själv till samma adress).</p>
+      <p><strong>Frågor?</strong> Kontakta <strong>${RESERVATION_KONTAKT}</strong>:
+      <a href="mailto:${RESERVATION_EMAIL}">${RESERVATION_EMAIL}</a></p>
     </div>`;
 }
 
